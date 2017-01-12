@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
+import FolderList from './FolderList';
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      folders: []
+      selectedFolderId: null,
+      selectedNoteId: null
     }
   }
 
   render() {
     return(
-      <h1>This is the app Component</h1>
+      <div>
+        < FolderList selectedFolderId = { this.state.selectedFolderId }/>
+      </div>
     )
   }
 }
