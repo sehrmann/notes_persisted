@@ -1,0 +1,7 @@
+.selected-note {
+  background: yellow;
+}
+.selected-folder {
+  background: #358DF7;
+  color: white;
+}
