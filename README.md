@@ -1,3 +1,3 @@
 # README
 
-This is a boilerplate setup for building a Rails app that uses ReactJS. To use, download or clone the repo, then run `npm install`. Build your React components in `/react/src`, and React component tests in `/react/test`. Run `npm start` before using booting up the rails server to test out your app.
+An app that lets users take notes. Users can create folders. Users can create notes within those folders, as well as edit and delete those notes. Users can complete all CRUD actions on the app's root page without the page refreshing.
