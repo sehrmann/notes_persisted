@@ -1,8 +1,0 @@
----
-title: "React Notes Persisted"
-type: "challenge"
-description: "Persist your React Notes application data"
-tags: "javascript, react, component lifecycle, fetch api"
-ignore:
-- "node_modules/"
-- "react-notes-persisted.md"
