@@ -12,12 +12,14 @@ class App extends Component {
       folders: [],
       notes: [],
       folderFormText: "",
+      noteText: ""
     };
 
     this.handleNoteSelect = this.handleNoteSelect.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
     this.handleFolderFormTextChange = this.handleFolderFormTextChange.bind(this);
     this.handleNewFolder = this.handleNewFolder.bind(this);
+    this.handleNoteTextChange = this.handleNoteTextChange.bind(this);
   }
 
   selectNotes(folderId, notes) {
@@ -30,9 +32,21 @@ class App extends Component {
     return(selectedNotes);
   }
 
+  selectNoteText(noteId) {
+    for (let note of this.state.notes) {
+      if (note.id == noteId) {
+        return(note.body);
+      }
+    }
+  }
+
   handleNoteSelect(id) {
     let newSelectedNoteId = id;
-    this.setState({ selectedNoteId: newSelectedNoteId });
+    let newNoteText = this.selectNoteText(id);
+    this.setState({
+      selectedNoteId: newSelectedNoteId,
+      noteText: newNoteText
+    });
   }
 
   handleFolderSelect(id) {
@@ -47,6 +61,11 @@ class App extends Component {
   handleFolderFormTextChange(event) {
     let newFolderFormText = event.target.value;
     this.setState({ folderFormText: newFolderFormText });
+  }
+
+  handleNoteTextChange(event) {
+    let newNoteText = event.target.value;
+    this.setState({ noteText: newNoteText });
   }
 
   handleNewFolder() {
@@ -124,16 +143,8 @@ class App extends Component {
   }
 
   render() {
-    let noteBody = "";
-    for (let note of this.state.notes) {
-      if (note.id == this.state.selectedNoteId) {
-        noteBody = note.body;
-        break;
-      }
-    }
 
     let selectedNotes = this.selectNotes(this.state.selectedFolderId, this.state.notes);
-
     return(
       <div className="row callout">
         < FolderList
@@ -153,7 +164,8 @@ class App extends Component {
         < Note
           selectedFolderId = { this.state.selectedFolderId }
           selectedNoteId = { this.state.selectedNoteId }
-          noteBody = { noteBody }
+          noteText = { this.state.noteText }
+          handleNoteTextChange = { this.handleNoteTextChange }
         />
       </div>
     )

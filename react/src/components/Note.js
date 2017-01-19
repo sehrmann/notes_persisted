@@ -9,8 +9,13 @@ class Note extends Component {
   render() {
     return(
       <div className="small-4 columns callout">
-        <h1>This is the Note component</h1>
-        <h3>{this.props.noteBody}</h3>
+        <form className="small-11 columns">
+          <textarea
+            placeholder="New Note"
+            value={this.props.noteText}
+            onChange={this.props.handleNoteTextChange}
+          />
+        </form>
       </div>
     )
   }

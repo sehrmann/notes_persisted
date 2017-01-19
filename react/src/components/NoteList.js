@@ -28,7 +28,7 @@ class NoteList extends Component {
 
     return(
       <div className="small-4 columns callout">
-        <h1>This is the NoteList component</h1>
+        <h1>Notes</h1>
         {notes}
       </div>
     )

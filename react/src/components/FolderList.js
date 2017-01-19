@@ -30,7 +30,7 @@ class FolderList extends Component {
 
     return(
       <div className="small-4 columns callout">
-        <h1>This is the FolderList component</h1>
+        <h1>Folders</h1>
         {folders}
         < FolderForm
           folderFormText = { this.props.folderFormText }
