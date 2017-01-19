@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FolderForm from './FolderForm';
 
 class FolderList extends Component {
   constructor(props) {
@@ -31,6 +32,11 @@ class FolderList extends Component {
       <div className="small-4 columns callout">
         <h1>This is the FolderList component</h1>
         {folders}
+        < FolderForm
+          folderFormText = { this.props.folderFormText }
+          handleFolderFormTextChange = { this.props.handleFolderFormTextChange }
+          handleNewFolder = { this.props.handleNewFolder }
+        />
       </div>
     )
   }

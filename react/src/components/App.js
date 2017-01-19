@@ -10,11 +10,14 @@ class App extends Component {
       selectedFolderId: null,
       selectedNoteId: null,
       folders: [],
-      notes: []
+      notes: [],
+      folderFormText: "",
     };
 
     this.handleNoteSelect = this.handleNoteSelect.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
+    this.handleFolderFormTextChange = this.handleFolderFormTextChange.bind(this);
+    this.handleNewFolder = this.handleNewFolder.bind(this);
   }
 
   selectNotes(folderId, notes) {
@@ -39,6 +42,61 @@ class App extends Component {
       selectedFolderId: newSelectedFolderId,
       selectedNoteId: newSelectedNoteId
     });
+  }
+
+  handleFolderFormTextChange(event) {
+    let newFolderFormText = event.target.value;
+    this.setState({ folderFormText: newFolderFormText });
+  }
+
+  handleNewFolder() {
+    let data = {
+      folder: {
+        name: this.state.folderFormText
+      }
+    }
+    let jsonStringData = JSON.stringify(data);
+
+    fetch('/folders.json', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonStringData
+    })
+      .then(response => {
+        if (response.ok) {
+          return response;
+        } else {
+          let errorMessage = `${response.status} (${response.statusText})`,
+          error = new Error(errorMessage);
+          throw(error);
+        }
+      })
+      .then(response => {
+        fetch('/folders.json')
+          .then(response => {
+            if (response.ok) {
+              return response;
+            } else {
+              let errorMessage = `${response.status}, (${response.statusText})`;
+              let error = new Error(errorMessage);
+              throw(error);
+            }
+          })
+          .then(response => response.json())
+          .then(body => {
+            let newFolders = body.folders;
+            let newNotes = body.notes;
+            let newSelectedFolderId = newFolders[0].id;
+            let newFolderFormText = "";
+            this.setState({
+              folders: newFolders,
+              notes: newNotes,
+              selectedFolderId: newSelectedFolderId,
+              folderFormText: newFolderFormText
+            });
+          });
+      })
+      .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
 
   componentDidMount () {
@@ -82,6 +140,9 @@ class App extends Component {
           folders = { this.state.folders }
           selectedFolderId = { this.state.selectedFolderId }
           handleFolderSelect = { this.handleFolderSelect }
+          folderFormText = { this.state.folderFormText }
+          handleFolderFormTextChange = { this.handleFolderFormTextChange }
+          handleNewFolder = { this.handleNewFolder }
         />
         < NotesList
           notes = { selectedNotes }
