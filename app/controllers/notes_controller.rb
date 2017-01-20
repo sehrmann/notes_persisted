@@ -11,6 +11,13 @@ class NotesController < ApplicationController
   end
 
   def create
+    @note = Note.new(note_params)
+    respond_to do |format|
+      format.html
+      format.json {
+        @note.save
+      }
+    end
   end
 
 
@@ -18,5 +25,11 @@ class NotesController < ApplicationController
   end
 
   def delete
+  end
+
+  private
+
+  def note_params
+    params.require(:note).permit(:body, :folder_id)
   end
 end

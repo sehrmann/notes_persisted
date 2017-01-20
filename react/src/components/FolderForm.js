@@ -8,11 +8,11 @@ class FolderForm extends Component {
 
   render() {
     return(
-      <div className="row">
-        <button className="small-1 columns" onClick={this.props.handleNewFolder}>
-          <i className="fa fa-2x fa-plus-circle" aria-hidden="true"></i>
-        </button>
-        <form className="small-11 columns">
+      <div className="row collapse">
+        <div className="small-2 columns button" onClick={this.props.handleNewFolder}>
+          <i className="fa fa-plus-circle" aria-hidden="true"></i>
+        </div>
+        <form className="small-10 columns">
           <input
             type="text"
             placeholder="New Folder"

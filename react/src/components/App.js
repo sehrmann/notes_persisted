@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FolderList from './FolderList';
-import NotesList from './NoteList';
+import NoteList from './NoteList';
 import Note from './Note';
 
 class App extends Component {
@@ -20,6 +20,7 @@ class App extends Component {
     this.handleFolderFormTextChange = this.handleFolderFormTextChange.bind(this);
     this.handleNewFolder = this.handleNewFolder.bind(this);
     this.handleNoteTextChange = this.handleNoteTextChange.bind(this);
+    this.handleNewNote = this.handleNewNote.bind(this);
   }
 
   selectNotes(folderId, notes) {
@@ -118,6 +119,55 @@ class App extends Component {
       .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
 
+  handleNewNote() {
+    let data = {
+      note: {
+        body: "New Note!",
+        folder_id: this.state.selectedFolderId
+      }
+    }
+    let jsonStringData = JSON.stringify(data);
+
+    fetch('/notes.json', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonStringData
+    })
+      .then(response => {
+        if (response.ok) {
+          return response;
+        } else {
+          let errorMessage = `${response.status} (${response.statusText})`,
+          error = new Error(errorMessage);
+          throw(error);
+        }
+      })
+      .then(response => {
+        fetch('/folders.json')
+          .then(response => {
+            if (response.ok) {
+              return response;
+            } else {
+              let errorMessage = `${response.status}, (${response.statusText})`;
+              let error = new Error(errorMessage);
+              throw(error);
+            }
+          })
+          .then(response => response.json())
+          .then(body => {
+            let newFolders = body.folders;
+            let newNotes = body.notes;
+            let newSelectedNoteId = newNotes[newNotes.length-1].id;
+            this.setState({
+              folders: newFolders,
+              notes: newNotes,
+              selectedNoteId: newSelectedNoteId
+            });
+          });
+      })
+      .catch(error => console.error(`Error in fetch: ${error.message}`));
+  }
+
   componentDidMount () {
     fetch('/folders.json')
       .then(response => {
@@ -155,11 +205,12 @@ class App extends Component {
           handleFolderFormTextChange = { this.handleFolderFormTextChange }
           handleNewFolder = { this.handleNewFolder }
         />
-        < NotesList
+        < NoteList
           notes = { selectedNotes }
           selectedFolderId = { this.state.selectedFolderId }
           selectedNoteId = { this.state.selectedNoteId }
           handleNoteSelect = { this.handleNoteSelect }
+          handleNewNote = { this.handleNewNote }
         />
         < Note
           selectedFolderId = { this.state.selectedFolderId }

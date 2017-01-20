@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import NoteForm from './NoteForm';
 
 class NoteList extends Component {
   constructor(props) {
@@ -29,6 +30,9 @@ class NoteList extends Component {
     return(
       <div className="small-4 columns callout">
         <h1>Notes</h1>
+        < NoteForm
+          handleNewNote = {this.props.handleNewNote}
+        />
         {notes}
       </div>
     )
