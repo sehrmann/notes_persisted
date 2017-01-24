@@ -21,6 +21,8 @@ class App extends Component {
     this.handleNewFolder = this.handleNewFolder.bind(this);
     this.handleNoteTextChange = this.handleNoteTextChange.bind(this);
     this.handleNewNote = this.handleNewNote.bind(this);
+    this.handleUpdateNote = this.handleUpdateNote.bind(this);
+    this.handleDeleteNote = this.handleDeleteNote.bind(this);
   }
 
   selectNotes(folderId, notes) {
@@ -33,17 +35,17 @@ class App extends Component {
     return(selectedNotes);
   }
 
-  selectNoteText(noteId) {
+  selectNote(noteId) {
     for (let note of this.state.notes) {
       if (note.id == noteId) {
-        return(note.body);
+        return(note);
       }
     }
   }
 
   handleNoteSelect(id) {
     let newSelectedNoteId = id;
-    let newNoteText = this.selectNoteText(id);
+    let newNoteText = this.selectNote(id).body;
     this.setState({
       selectedNoteId: newSelectedNoteId,
       noteText: newNoteText
@@ -168,6 +170,98 @@ class App extends Component {
       .catch(error => console.error(`Error in fetch: ${error.message}`));
   }
 
+  handleUpdateNote() {
+    let data = {
+      note: {
+        body: this.state.noteText,
+        folder_id: this.state.selectedFolderId,
+      }
+    }
+    let jsonStringData = JSON.stringify(data);
+
+    fetch(`/notes/${this.state.selectedNoteId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonStringData
+    })
+      .then(response => {
+        if (response.ok) {
+          return response;
+        } else {
+          let errorMessage = `${response.status} (${response.statusText})`,
+          error = new Error(errorMessage);
+          throw(error);
+        }
+      })
+      .then(response => {
+        fetch('/folders.json')
+          .then(response => {
+            if (response.ok) {
+              return response;
+            } else {
+              let errorMessage = `${response.status}, (${response.statusText})`;
+              let error = new Error(errorMessage);
+              throw(error);
+            }
+          })
+          .then(response => response.json())
+          .then(body => {
+            let newNotes = body.notes;
+            this.setState({
+              notes: newNotes
+            });
+          });
+      })
+      .catch(error => console.error(`Error in fetch: ${error.message}`));
+  }
+
+  handleDeleteNote() {
+    let data = {
+      note: {
+        body: this.state.noteText,
+        folder_id: this.state.selectedFolderId,
+      }
+    }
+    let jsonStringData = JSON.stringify(data);
+
+    fetch(`/notes/${this.state.selectedNoteId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonStringData
+    })
+      .then(response => {
+        if (response.ok) {
+          return response;
+        } else {
+          let errorMessage = `${response.status} (${response.statusText})`,
+          error = new Error(errorMessage);
+          throw(error);
+        }
+      })
+      .then(response => {
+        fetch('/folders.json')
+          .then(response => {
+            if (response.ok) {
+              return response;
+            } else {
+              let errorMessage = `${response.status}, (${response.statusText})`;
+              let error = new Error(errorMessage);
+              throw(error);
+            }
+          })
+          .then(response => response.json())
+          .then(body => {
+            let newNotes = body.notes;
+            let newSelectedNoteId = null;
+            this.setState({
+              notes: newNotes,
+              selectedNoteId: newSelectedNoteId
+            });
+          });
+      })
+      .catch(error => console.error(`Error in fetch: ${error.message}`));
+  }
+
   componentDidMount () {
     fetch('/folders.json')
       .then(response => {
@@ -193,8 +287,13 @@ class App extends Component {
   }
 
   render() {
-
     let selectedNotes = this.selectNotes(this.state.selectedFolderId, this.state.notes);
+
+    let selectedNote = null;
+    if (this.state.selectedNoteId) {
+      selectedNote = this.selectNote(this.state.selectedNoteId);
+    }
+
     return(
       <div className="row callout">
         < FolderList
@@ -213,10 +312,11 @@ class App extends Component {
           handleNewNote = { this.handleNewNote }
         />
         < Note
-          selectedFolderId = { this.state.selectedFolderId }
-          selectedNoteId = { this.state.selectedNoteId }
+          selectedNote = { selectedNote }
           noteText = { this.state.noteText }
           handleNoteTextChange = { this.handleNoteTextChange }
+          handleUpdateNote = { this.handleUpdateNote }
+          handleDeleteNote = { this.handleDeleteNote }
         />
       </div>
     )

@@ -22,9 +22,13 @@ class NotesController < ApplicationController
 
 
   def update
+    @note = Note.find(params[:id])
+    @note.update(note_params)
   end
 
-  def delete
+  def destroy
+    @note = Note.find(params[:id])
+    @note.destroy
   end
 
   private
